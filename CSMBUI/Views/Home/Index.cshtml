@@ -1,0 +1,183 @@
+﻿@{ 
+    ViewData["Title"] = "首页";
+}
+
+@section css{
+    <link href="/css/index.css" rel="stylesheet" />
+}
+
+<div id="app">
+    <el-row class="container">
+        <el-col :span="24" class="header">
+            <el-col :span="10" class="logo" :class="collapsed?'logo-collapse-width':'logo-width'">
+                <span v-text="collapsed?'':sysName"></span>
+            </el-col>
+            <el-col :span="10">
+                <!-- click 切换左侧菜单显示 -->
+                <div class="tools" @@click.prevent="collapsed= !collapsed">
+                    <i class="el-icon-more"></i>
+                </div>
+            </el-col>
+            <el-col :span="4" class="userinfo">
+                <el-dropdown trigger="hover">
+                    <span class="el-dropdown-link userinfo-inner" v-text="sysUserName"></span>
+                    <img :src="this.sysUserAvatar" />
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item divided @@click.native="logout">退出登录</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+            </el-col>
+        </el-col>
+        <el-col :span="24" class="main">
+            <aside class="el-menu" :class="collapsed?'menu-collapsed':'menu-expanded'">
+                <el-col v-show="!collapsed">
+                    <el-menu default-active="0" class="el-menu-vertical-demo " unique-opened="ture">
+                        <template v-for="(item,index) in menus">
+                            <el-submenu :index="index+''" @@click.native="menuClick(item.url,index)" v-if="item.items.length > 1">
+                                <template slot="title">
+                                    <i :class="item.icon"></i>
+                                    <span v-text="item.name"></span>
+                                </template>
+                                <template v-for="(item2,index2) in item.items">
+                                    <el-menu-item :index="index + '-' + index2 + '' " v-text="item2" @@click.native.stop="menuClick(index2,index + '-' + index2 + '')"></el-menu-item>
+                                </template>
+                            </el-submenu>
+                            <el-menu-item :index="index+''" v-else>
+                                <i :class="item.icon"></i>
+                                <span v-text="item.name"></span>
+                            </el-menu-item>
+                        </template>
+                    </el-menu>
+                </el-col>
+                <el-col v-show="collapsed">
+                    <template v-for="(item,index) in menus">
+                        <div class="el-menu-item " @@mouseover="item.hovers = true" @@mouseout="item.hovers = false">
+                            <i :class="item.icon"></i>
+                            <template v-if="item.items.length > 1">
+                                <ul class="menu-ul" v-show="item.hovers">
+                                    <li v-text="item2" v-for="(item2,index2) in item.items"></li>
+                                </ul>
+                            </template>
+                        </div>
+                    </template>
+                </el-col>
+            </aside>
+            <!--内容显示-->
+            <section class="content-container">
+                <div v-show="show== '-1'">
+                    <h1>主要内容</h1>
+                </div>
+                <template v-for="(item,index) in menus">
+                    <div v-text="item.name" v-show="show == index + ''">
+
+                    </div>
+                    <template v-if="item.items.length > 1 ">
+                        <template v-for="(item2,index2) in item.items">
+                            <div v-text="item2" v-show="show == index + '-' + index2 + ''">
+
+                            </div>
+                        </template>
+                    </template>
+                </template>
+
+            </section>
+
+        </el-col>
+    </el-row>
+</div>
+
+
+@section js{
+<!-- 引入axios -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    var csrfmiddlewaretoken = '{{ csrf_token }}'
+    var home = {
+        data() {
+            return {
+                menus: [],
+                show: '-1',
+                // menus: [{
+                //     icon: 'el-icon-message',
+                //     name: '导航一',
+                //     hovers: false,
+                //     url: '/food/',
+                //     items: [
+                //         "选项一",
+                //         "选项二",
+                //         "选项三",
+                //         "选项四"
+                //     ]
+                // }],
+                sysName: '后台',
+                collapsed: false,
+                sysUserName: 'Peach',
+                sysUserAvatar: '',
+
+            }
+        },
+        created: function() {
+            // `this` 指向 vm 实例
+            console.log(this)
+            var that = this
+            console.log(this.sysName)
+            axios.get('/home/')
+                .then(function(data) {
+                    console.log(data);
+                    console.log(that.sysUserName)
+                    that.menus = data.data.menus
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
+        },
+
+        methods: {
+            onSubmit() {
+                console.log('submit!');
+            },
+            handleopen() {
+                //console.log('handleopen');
+            },
+            handleclose() {
+                //console.log('handleclose');
+            },
+            handleselect: function(a, b) {},
+            //退出登录
+            logout: function() {
+                var _this = this;
+                this.$confirm('确认退出吗?', '提示', {
+                    //type: 'warning'
+                }).then(() => {
+                    console.log('确定')
+                    window.location.href = "/logout"
+                        // axios.get('/logout')
+                        //     .then(function(response) {
+                        //         console.log('退出');
+                        //     })
+                        //     .catch(function(error) {
+                        //         console.log(error);
+                        //     });
+                }).catch(() => {
+                    console.log('取消')
+                });
+            },
+            menuClick(url, index) {
+                console.log(index)
+                this.show = index
+                    // axios.post(url, {
+                    //         csrfmiddlewaretoken: csrfmiddlewaretoken
+                    //     })
+                    //     .then(function(response) {
+                    //         console.log(response);
+                    //     })
+                    //     .catch(function(error) {
+                    //         console.log(error);
+                    //     });
+            }
+        },
+    }
+    var Ctor = Vue.extend(home)
+    new Ctor().$mount('#app')
+</script>
+}
