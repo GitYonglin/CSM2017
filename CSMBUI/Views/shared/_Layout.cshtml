@@ -6,6 +6,8 @@
     <title>@ViewData["Title"]</title>
     <!-- 引入样式 -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+
+    @*<link href="/css/element.css" rel="stylesheet" />*@  
     @RenderSection("css", false)
 </head>
 <body>
@@ -16,7 +18,12 @@
 </html>
 <!-- 先引入 Vue -->
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
+@*<script src="/js/vue.js"></script>*@
 <!-- 引入组件库 -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+@*<script src="/js/element.js"></script>*@
+    <!-- 引入axios -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+@*<script src="/js/axios.min.js"></script>*@
 @RenderSection("js", false)
 

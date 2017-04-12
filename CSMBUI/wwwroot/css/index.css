@@ -1,3 +1,4 @@
+@charset "UTF-8";
 body {
   margin: 0px;
   padding: 0px;
@@ -14,8 +15,21 @@ body {
   bottom: 0px;
   width: 100%; }
 
+/*背景颜色*/
 .bg-eef1f6 {
   background-color: #eef1f6; }
+
+.bg-f8f8f8 {
+  background-color: #f8f8f8; }
+
+.mg0 {
+  margin: 0; }
+
+.w100 {
+  width: 100; }
+
+.float-right {
+  float: right; }
 
 .container {
   position: absolute;

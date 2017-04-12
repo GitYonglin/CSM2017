@@ -38,6 +38,7 @@ namespace CSMBUI
 
             //依赖注入
             services.AddScoped<IAdminUserRepository, AdminUserRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             services.AddMvc();
             // session 设置

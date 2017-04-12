@@ -14,5 +14,7 @@ namespace CSMDbContext
         }
 
         public DbSet<AdminUser> AdminUsers { get; set; }
+        public DbSet<Category> Categorys { get; set; }
+        public DbSet<CategoryOne> CategoryOnes { get; set; }
     }
 }

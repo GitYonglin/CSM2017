@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\css\element.css" />
     <Content Include="wwwroot\css\index.css" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
+    <Content Include="wwwroot\scss\cms.scss" />
+    <Content Include="wwwroot\scss\index.scss" />
+    <Content Include="wwwroot\scss\sc.scss" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
@@ -27,6 +27,10 @@
   <ItemGroup>
     <ProjectReference Include="..\CSMDbContext\CSMDbContext.csproj" />
     <ProjectReference Include="..\CSMEntity\CSMEntity.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\Upload\Category\" />
+    <Folder Include="wwwroot\Upload\Category\" />
   </ItemGroup>
 
 </Project>

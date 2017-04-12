@@ -1,4 +1,4 @@
-﻿@{ 
+﻿@{
     ViewData["Title"] = "首页";
 }
 
@@ -32,30 +32,60 @@
             <aside class="el-menu" :class="collapsed?'menu-collapsed':'menu-expanded'">
                 <el-col v-show="!collapsed">
                     <el-menu default-active="0" class="el-menu-vertical-demo " unique-opened="ture">
-                        <template v-for="(item,index) in menus">
-                            <el-submenu :index="index+''" @@click.native="menuClick(item.url,index)" v-if="item.items.length > 1">
+                       @*一级操作*@
+                        <el-menu-item>
+                            <el-button type="primary" icon="edit" @@click.stop="edit = !edit">编辑</el-button>
+                            <el-button type="success" icon="plus" @@click.stop="MenuInit(0); Menu = true">添加</el-button>
+                        </el-menu-item>
+                        <template v-for="(item, index) in menus">
+                            <el-submenu :index="index+''" @@click.native="menuClick(item.url,index)" >
+                                @*一级菜单*@
                                 <template slot="title">
+                                    @*操作按钮组*@
+                                    <el-button-group v-show="edit">
+                                        @*修改*@
+                                        <button type="button" class="el-button el-button--primary el-button--mini" @@click.stop="cOneEdit(item.categoryOneId)">
+                                            <i class="mg0 el-icon-edit"></i>
+                                        </button>
+                                        @*删除*@
+                                        <button type="button" class="el-button el-button--danger el-button--mini" @@click.stop="cOneDelete(item.categoryOneId)">
+                                            <i class="mg0 el-icon-delete"></i>
+                                        </button>
+                                    </el-button-group>
                                     <i :class="item.icon"></i>
                                     <span v-text="item.name"></span>
                                 </template>
-                                <template v-for="(item2,index2) in item.items">
-                                    <el-menu-item :index="index + '-' + index2 + '' " v-text="item2" @@click.native.stop="menuClick(index2,index + '-' + index2 + '')"></el-menu-item>
+                                @*二级菜单*@
+                                <template v-for="(item2,index2) in item.subCategory" v-if="item.subCategory.length > 0 ">
+                                    <el-menu-item :index="index + '-' + index2 + '' "  @@click.native.stop="menuClick(index2,index + '-' + index2 + '')">
+                                    @*操作按钮组*@
+                                        <el-button-group v-show="edit">
+                                            <button type="button" class="el-button el-button--primary el-button--mini" @@click.stop="OneMenuId = item.categoryOneId; SubEdit(item2.categoryId)">
+                                                <i class="mg0 el-icon-edit"></i>
+                                            </button>
+                                            <button type="button" class="el-button el-button--danger el-button--mini" @@click.stop="SubCategoryDelete(item2.categoryId)" > 
+                                                <i class="mg0 el-icon-delete"></i>
+                                            </button>
+                                        </el-button-group>
+                                        <span v-text="item2.name"></span>
+                                    </el-menu-item>
                                 </template>
+                                @*添加二级菜单*@
+                                <el-menu-item v-show="edit">
+                                    <el-button style="width:100%;"  type="success" icon="plus" @@click.stop="MenuInit(item.categoryOneId); SubMenu = true; Categorycount.push(1); ">添加</el-button>
+                                </el-menu-item>
                             </el-submenu>
-                            <el-menu-item :index="index+''" v-else>
-                                <i :class="item.icon"></i>
-                                <span v-text="item.name"></span>
-                            </el-menu-item>
                         </template>
+                        
                     </el-menu>
                 </el-col>
                 <el-col v-show="collapsed">
                     <template v-for="(item,index) in menus">
-                        <div class="el-menu-item " @@mouseover="item.hovers = true" @@mouseout="item.hovers = false">
+                        <div class="el-menu-item " @@mouseover="item.show = true" @@mouseout="item.hovers = false">
                             <i :class="item.icon"></i>
-                            <template v-if="item.items.length > 1">
-                                <ul class="menu-ul" v-show="item.hovers">
-                                    <li v-text="item2" v-for="(item2,index2) in item.items"></li>
+                            <template v-if="item.subCategory.length > 0">
+                                <ul class="menu-ul" v-show="item.show">
+                                    <li v-text="item2.name" v-for="(item2,index2) in item.subCategory"></li>
                                 </ul>
                             </template>
                         </div>
@@ -66,15 +96,26 @@
             <section class="content-container">
                 <div v-show="show== '-1'">
                     <h1>主要内容</h1>
+                    <el-button type="info" @@click="add(0)">添加+</el-button>
                 </div>
                 <template v-for="(item,index) in menus">
-                    <div v-text="item.name" v-show="show == index + ''">
-
+                    <div v-show="show == index + ''">
+                        <div class="block">
+                            <span class="demonstration">{{item.name}}</span>
+                            <span class="wrapper float-right">
+                                <el-button type="info" @@click="add(index)">添加+</el-button>
+                            </span>
+                        </div>
                     </div>
-                    <template v-if="item.items.length > 1 ">
-                        <template v-for="(item2,index2) in item.items">
-                            <div v-text="item2" v-show="show == index + '-' + index2 + ''">
-
+                    <template v-if="item.subCategory.length > 0 ">
+                        <template v-for="(item2,index2) in item.subCategory">
+                            <div v-show="show == index + '-' + index2 + ''">
+                                <div class="block">
+                                    <span class="demonstration">{{item2.name}}</span>
+                                    <span class="wrapper float-right">
+                                        <el-button type="info" @@click="add(index)">添加+</el-button>
+                                    </span>
+                                </div>
                             </div>
                         </template>
                     </template>
@@ -84,100 +125,351 @@
 
         </el-col>
     </el-row>
+    @*主分类与子类编辑*@
+    <el-dialog title="主菜单" v-model="Menu">
+        <el-form action="/Category/CategoryOneAddAsync/" method="post" enctype="multipart/form-data">
+            <input hidden="hidden" type="text" name="c.Id" v-model="cOne.id" />
+            <el-form-item label="分类名称" :label-width="formLabelWidth">
+                <el-input name="c.Name" v-model="cOne.name" auto-complete="off" ></el-input>
+            </el-form-item>
+            <el-form-item label="Ico图标" :label-width="formLabelWidth">
+                <el-input name="c.Icon" v-model="cOne.icon" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="url地址" :label-width="formLabelWidth">
+                <el-input name="c.url" v-model="cOne.url" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="图片" :label-width="formLabelWidth">
+                <input name="c.imgUrl"  type="text" v-model="cOne.imgUrl" />
+                <el-input type="file" name="c.File" auto-complete="off"></el-input>
+            </el-form-item>
+            @*子类添加*@
+
+            <div class="el-form bg-f8f8f8" v-for="(item, index) in Categorycount">
+                <div class="el-dialog__headerbtn" @@click="Categorycount.splice(index,1)">
+                    <i class="el-dialog__close el-icon el-icon-close"></i>
+                </div>
+
+                <h2>子类{{index + 1 }}</h2>
+                <input hidden="hidden" type="text" :name="'SubCategorys['+ index + '].id'" v-model="item.id" />
+                <el-form-item label="分类名称" :label-width="formLabelWidth">
+                    <el-input :name="'SubCategorys['+ index + '].Name'" v-model="item.name" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="Ico图标" :label-width="formLabelWidth">
+                    <el-input :name="'SubCategorys['+ index + '].Icon'" v-model="item.icon" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="url地址" :label-width="formLabelWidth">
+                    <el-input :name="'SubCategorys['+ index + '].url'" v-model="item.url" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="图片" :label-width="formLabelWidth">
+                    <input :name="'SubCategorys['+ index + '].imgUrl'"  type="text" v-model="item.imgUrl" />
+                    <el-input :name="'SubCategorys['+ index + '].file'" v-model="item.file" type="file" auto-complete="off"></el-input>
+                </el-form-item>
+            </div>
+            <el-form-item label="操作" :label-width="formLabelWidth">
+                <el-button @@click="Menu = false">取 消</el-button>
+                <el-button type="info" @@click="CategoryCountAdd">添加子类+</el-button>
+                <el-button type="danger" native-type="submit">提交保存</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+    @*子分类编辑*@
+    <el-dialog title="子类" v-model ="SubMenu" >
+        <el-form action="/Category/SubCategoryAddAsync/" method="post" enctype="multipart/form-data">
+            <input  type="text" name="id" v-model="OneMenuId" />
+            <div class="el-form bg-f8f8f8" v-for="(item, index) in Categorycount">
+                <div class="el-dialog__headerbtn" @@click="Categorycount.splice(index,1)">
+                    <i class="el-dialog__close el-icon el-icon-close"></i>
+                </div>
+
+                <h2>子类{{index + 1 }}</h2>
+                <input :name="'SubCategorys['+ index + '].id'" type="text" v-model="item.categoryId" />
+                <el-form-item label="分类名称" :label-width="formLabelWidth">
+                    <el-input :name="'SubCategorys['+ index + '].Name'" v-model="item.name" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="Ico图标" :label-width="formLabelWidth">
+                    <el-input :name="'SubCategorys['+ index + '].Icon'" v-model="item.icon" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="url地址" :label-width="formLabelWidth">
+                    <el-input :name="'SubCategorys['+ index + '].url'" v-model="item.url" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="图片" :label-width="formLabelWidth">
+                    <input :name="'SubCategorys['+ index + '].ImgUrl'" type="text" v-model="item.imgUrl" />
+                    <el-input :name="'SubCategorys['+ index + '].file'" v-model="item.file" type="file" auto-complete="off"></el-input>
+                </el-form-item>
+            </div>
+            <el-form-item label="操作" :label-width="formLabelWidth">
+                <el-button @@click="SubMenu = false">取 消</el-button>
+                <el-button type="info" @@click="CategoryCountAdd">添加子类+</el-button>
+                <el-button type="danger" native-type="submit">提交保存</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+    @*食材*@
+    <el-dialog title="食材" v-model="FoodAdd">
+        <el-form >
+            <el-form-item label="活动名称" :label-width="formLabelWidth">
+                <el-input  auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="活动区域" :label-width="formLabelWidth">
+                <el-select  placeholder="请选择活动区域">
+                    <el-option label="区域一" value="shanghai"></el-option>
+                    <el-option label="区域二" value="beijing"></el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @@click="FoodAdd = false">取 消</el-button>
+            <el-button type="primary" @@click="FoodAdd = false">确 定</el-button>
+        </div>
+    </el-dialog>
+    @*菜谱*@
+    <el-dialog title="菜谱" v-model="CookbookAdd">
+        <el-form >
+            <el-form-item label="活动名称" :label-width="formLabelWidth">
+                <el-input auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="活动区域" :label-width="formLabelWidth">
+                <el-select placeholder="请选择活动区域">
+                    <el-option label="区域一" value="shanghai"></el-option>
+                    <el-option label="区域二" value="beijing"></el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @@click="CookbookAdd = false">取 消</el-button>
+            <el-button type="primary" @@click="CookbookAdd = false">确 定</el-button>
+        </div>
+    </el-dialog>
+    @*套餐*@
+    <el-dialog title="套餐" v-model="PackageAdd">
+        <el-form >
+            <el-form-item label="活动名称" :label-width="formLabelWidth">
+                <el-input auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="活动区域" :label-width="formLabelWidth">
+                <el-select placeholder="请选择活动区域">
+                    <el-option label="区域一" value="shanghai"></el-option>
+                    <el-option label="区域二" value="beijing"></el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @@click="PackageAdd = false">取 消</el-button>
+            <el-button type="primary" @@click="PackageAdd = false">确 定</el-button>
+        </div>
+    </el-dialog>
 </div>
 
 
 @section js{
-<!-- 引入axios -->
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script>
-    var csrfmiddlewaretoken = '{{ csrf_token }}'
-    var home = {
-        data() {
-            return {
-                menus: [],
-                show: '-1',
-                // menus: [{
-                //     icon: 'el-icon-message',
-                //     name: '导航一',
-                //     hovers: false,
-                //     url: '/food/',
-                //     items: [
-                //         "选项一",
-                //         "选项二",
-                //         "选项三",
-                //         "选项四"
-                //     ]
-                // }],
-                sysName: '后台',
-                collapsed: false,
-                sysUserName: 'Peach',
-                sysUserAvatar: '',
+    <script>
+        var csrfmiddlewaretoken = '{{ csrf_token }}'
+        var home = {
+            data() {
+                return {
+                    menus: [],
+                    show: '-1',
+                    edit: false,
+                    // menus: [{
+                    //     icon: 'el-icon-message',
+                    //     name: '导航一',
+                    //     show: false,
+                    //     url: '/food/',
+                    //     SubCategory: [
+                    //         "选项一",
+                    //         "选项二",
+                    //         "选项三",
+                    //         "选项四"
+                    //     ]
+                    // }],
+                    sysName: '后台',
+                    collapsed: false,
+                    sysUserName: 'Peach',
+                    sysUserAvatar: '',
 
-            }
-        },
-        created: function() {
-            // `this` 指向 vm 实例
-            console.log(this)
-            var that = this
-            console.log(this.sysName)
-            axios.get('/home/')
-                .then(function(data) {
-                    console.log(data);
-                    console.log(that.sysUserName)
-                    that.menus = data.data.menus
-                })
-                .catch(function(error) {
-                    console.log(error);
-                });
-        },
+                    Menu: false,
+                    SubMenu: false,
+                    OneMenuId : 0,
+                    CategoryAdd: false,
+                    cOne: {
+                        id : 0,
+                        icon: '',
+                        name: '',
+                        url: '',
+                        imgUrl:'',
+                        file: null
+                    },
+                    Categorycount: [],
+                    FoodAdd: false,
+                    CookbookAdd: false,
+                    PackageAdd: false,
+                    formLabelWidth: '120px',
 
-        methods: {
-            onSubmit() {
-                console.log('submit!');
+                }
             },
-            handleopen() {
-                //console.log('handleopen');
+            created: function () {
+                // `this` 指向 vm 实例
+                axios.get('/Menu/IndexAsync')
+                    .then((data) => {
+                        this.menus = data.data;
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             },
-            handleclose() {
-                //console.log('handleclose');
+
+            methods: {
+                onSubmit() {
+                    console.log('submit!');
+                },
+                handleopen() {
+                    //console.log('handleopen');
+                },
+                handleclose() {
+                    //console.log('handleclose');
+                },
+                handleselect: function (a, b) { },
+                //退出登录
+                logout: function () {
+                    var _this = this;
+                    this.$confirm('确认退出吗?', '提示', {
+                    }).then(() => {
+                        console.log('确定')
+                        window.location.href = "/logout"
+                    }).catch(() => {
+                        console.log('取消')
+                    });
+                    //this.$confirm('确认退出吗?', '提示', {
+                    //}).then(() => {
+                    //    console.log('确定')
+                    //    window.location.href = "/logout"
+                    //}).catch(() => {
+                    //    console.log('取消')
+                    //});
+                },
+                menuClick(url, index) {
+                    console.log(index)
+                    this.show = index
+                },
+                add(index) {
+                    if (index == 0) {
+                        this.CategoryAdd = true;
+                    }
+                    else if (index == 1) {
+                        this.FoodAdd = true;
+                    }
+                    else if (index == 2) {
+                        this.CookbookAdd = true
+                    }
+                    else if (index == 3) {
+                        this.PackageAdd = true
+                    }
+                    else {
+                        this.CategoryAdd = false
+                        this.FoodAdd = false
+                        this.CookbookAdd = false
+                        this.PackageAdd = false
+                    }
+                },
+                CategoryCountAdd() {
+                    this.Categorycount.push(
+                        {
+                            categoryId: 0,
+                            icon: '1',
+                            name: '1',
+                            url: '1',
+                            file: null
+                        })
+                },
+                //一级菜单修改
+                cOneEdit(id) {
+                    var url = '/Category/CategoryOneEditAsync/?id=' + id;
+                    axios.get(url)
+                    .then((data) => {
+                        this.cOne["id"] = data.data.categoryOneId;
+                        this.cOne["url"] = data.data.url;
+                        this.cOne['name'] = data.data.name;
+                        this.cOne['icon'] = data.data.icon;
+                        this.cOne['imgUrl'] = data.data.imgUrl;
+                        this.Categorycount = data.data.subCategory;
+                        this.Menu = true;
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+                },
+                // 删除一级菜单
+                cOneDelete(id) {
+                    this.$confirm('确认删除吗?', '提示', {
+                    }).then(() => {
+                        console.log('确定')
+                        var url = '/Category/CategoryOneDeleteAsync/?id=' + id;
+                        axios.get(url)
+                        .then((data) => {
+                            //this.menus = data.data;
+                            axios.get('/Menu/IndexAsync')
+                            .then((data) => {
+                                this.menus = data.data;
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                    }).catch(() => {
+                        console.log('取消')
+                    });
+                    
+                },
+                //二级菜单编辑
+                SubEdit(id){
+                    var url = '/Category/CategoryEditAsync/?id=' + id;
+                    axios.get(url)
+                    .then((data) => {
+                        this.Categorycount = data.data;
+                        this.SubMenu = true;
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+                
+                },
+                // 删除二级菜单
+                SubCategoryDelete(id) {
+                    this.$confirm('确认删除吗?', '提示', {
+                    }).then(() => {
+                        console.log('确定')
+                        var url = '/Category/SubCategoryDeleteAsync/?id=' + id;
+                        axios.get(url)
+                        .then((data) => {
+                            //this.menus = data.data;
+                            axios.get('/Menu/IndexAsync')
+                            .then((data) => {
+                                this.menus = data.data;
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                    }).catch(() => {
+                        console.log('取消')
+                    });
+
+                },
+                // 新曾菜单编辑 清楚数据
+                MenuInit(OneMenuId) {
+                    this.cOne = {icon: '',name: '',url: '',file: null,imgUrl:''};
+                    this.Categorycount = [];
+                    this.OneMenuId = OneMenuId;
+                }
             },
-            handleselect: function(a, b) {},
-            //退出登录
-            logout: function() {
-                var _this = this;
-                this.$confirm('确认退出吗?', '提示', {
-                    //type: 'warning'
-                }).then(() => {
-                    console.log('确定')
-                    window.location.href = "/logout"
-                        // axios.get('/logout')
-                        //     .then(function(response) {
-                        //         console.log('退出');
-                        //     })
-                        //     .catch(function(error) {
-                        //         console.log(error);
-                        //     });
-                }).catch(() => {
-                    console.log('取消')
-                });
-            },
-            menuClick(url, index) {
-                console.log(index)
-                this.show = index
-                    // axios.post(url, {
-                    //         csrfmiddlewaretoken: csrfmiddlewaretoken
-                    //     })
-                    //     .then(function(response) {
-                    //         console.log(response);
-                    //     })
-                    //     .catch(function(error) {
-                    //         console.log(error);
-                    //     });
-            }
-        },
-    }
-    var Ctor = Vue.extend(home)
-    new Ctor().$mount('#app')
-</script>
+        }
+        var Ctor = Vue.extend(home)
+        new Ctor().$mount('#app')
+    </script>
 }
