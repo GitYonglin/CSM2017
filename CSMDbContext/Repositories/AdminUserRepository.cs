@@ -10,7 +10,7 @@ using CSMUtility;
 
 namespace CSMDbContext.Repositories
 {
-    public class AdminUserRepository : RepositoryBase, IAdminUserRepository
+    public class AdminUserRepository : RepositoryBase<AdminUser>, IAdminUserRepository
     {
         public AdminUserRepository(EntityDbContext db) : base(db)
         {

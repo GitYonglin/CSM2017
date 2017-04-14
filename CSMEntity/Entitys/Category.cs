@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -16,10 +17,11 @@ namespace CSMEntity.Entitys
         public string url { get; set; }
         public string ImgUrl { get; set; }
 
-        //[ForeignKey("CategoryOne")]
-        //public int CategoryOneId { get; set; }
-        //public CategoryOne CategoryOne { get; set; }
-
+        [ForeignKey("CategoryOne")]
+        public int CategoryOneId { get; set; }
+        //在返回json数据时避免循环问题
+        [JsonIgnore]
+        public CategoryOne CategoryOne { get; set; }
     }
     public class CategoryOne
     {

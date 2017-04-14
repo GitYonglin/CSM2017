@@ -8,8 +8,8 @@ using CSMDbContext;
 namespace CSMDbContext.Migrations
 {
     [DbContext(typeof(EntityDbContext))]
-    [Migration("20170412151509_db2017-04-12")]
-    partial class db20170412
+    [Migration("20170414013924_db2017-04-14")]
+    partial class db20170414
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,7 +40,7 @@ namespace CSMDbContext.Migrations
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("CategoryOneId");
+                    b.Property<int>("CategoryOneId");
 
                     b.Property<string>("Icon");
 
@@ -77,9 +77,10 @@ namespace CSMDbContext.Migrations
 
             modelBuilder.Entity("CSMEntity.Entitys.Category", b =>
                 {
-                    b.HasOne("CSMEntity.Entitys.CategoryOne")
+                    b.HasOne("CSMEntity.Entitys.CategoryOne", "CategoryOne")
                         .WithMany("SubCategory")
-                        .HasForeignKey("CategoryOneId");
+                        .HasForeignKey("CategoryOneId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
         }
     }

@@ -150,7 +150,7 @@
                 </div>
 
                 <h2>子类{{index + 1 }}</h2>
-                <input hidden="hidden" type="text" :name="'SubCategorys['+ index + '].id'" v-model="item.id" />
+                <input hidden="hidden" type="text" :name="'SubCategorys['+ index + '].id'" v-model="item.categoryId" />
                 <el-form-item label="分类名称" :label-width="formLabelWidth">
                     <el-input :name="'SubCategorys['+ index + '].Name'" v-model="item.name" auto-complete="off"></el-input>
                 </el-form-item>

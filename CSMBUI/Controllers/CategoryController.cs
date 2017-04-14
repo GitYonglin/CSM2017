@@ -36,7 +36,7 @@ namespace CSMBUI.Controllers
             return View();
         }
         /// <summary>
-        /// 添加主分类子分类
+        /// 新增||更新主分类数据
         /// </summary>
         /// <param name="c">主分类数据</param>
         /// <param name="SubCategorys">子分类数据</param>
@@ -71,19 +71,13 @@ namespace CSMBUI.Controllers
                 }
                 category.SubCategory = SubC;
             }
-            if (c.Id==0)
-            {
-                await _CategoryText.CategoryOneAddAsync(category);
-                
-            }
-            else
-            {
-                await _CategoryText.CategoryOneAddAsync(category, c.Id);
-            }
+            //新增数据
+            await _CategoryText.CategoryOneAddAsync(category);
+
             return RedirectToAction("Index", "Home");
         }
         /// <summary>
-        /// 添加子分类
+        /// 新增||更新子分类
         /// </summary>
         /// <param name="id">主分类Id</param>
         /// <param name="SubCategorys">子类数据</param>
@@ -107,7 +101,7 @@ namespace CSMBUI.Controllers
         }
         
         /// <summary>
-        /// 获取一级菜单数据
+        /// 获取主分类数据
         /// </summary>
         /// <param name="id">菜单Id</param>
         /// <returns></returns>
@@ -118,6 +112,11 @@ namespace CSMBUI.Controllers
             return Json(cOne);
         }
 
+        /// <summary>
+        /// 获取子分类编辑数据
+        /// </summary>
+        /// <param name="id">子分类id</param>
+        /// <returns></returns>
         public async Task<IActionResult> CategoryEditAsync(int id)
         {
             var cOne = await _CategoryText.OneSubAsync(id);
@@ -125,13 +124,22 @@ namespace CSMBUI.Controllers
             arr.Add(cOne);
             return Json(arr);
         }
-
+        /// <summary>
+        /// 删除主分类
+        /// </summary>
+        /// <param name="id">实体id</param>
+        /// <returns></returns>
         public async Task<IActionResult> CategoryOneDeleteAsync(int id)
         {
-            var b = await _CategoryText.CategoryOneDeleteAsync(id);
-            return Json(new { msg = b });
-        }
+            await _CategoryText.CategoryOneDeleteAsync(id);
 
+            return Json(new { msg = "OK" });
+        }
+        /// <summary>
+        /// 删除子分类
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> SubCategoryDeleteAsync(int id)
         {
             var b = await _CategoryText.SubCategoryDeleteAsync(id);

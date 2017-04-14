@@ -39,7 +39,7 @@ namespace CSMDbContext.Migrations
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("CategoryOneId");
+                    b.Property<int>("CategoryOneId");
 
                     b.Property<string>("Icon");
 
@@ -76,9 +76,10 @@ namespace CSMDbContext.Migrations
 
             modelBuilder.Entity("CSMEntity.Entitys.Category", b =>
                 {
-                    b.HasOne("CSMEntity.Entitys.CategoryOne")
+                    b.HasOne("CSMEntity.Entitys.CategoryOne", "CategoryOne")
                         .WithMany("SubCategory")
-                        .HasForeignKey("CategoryOneId");
+                        .HasForeignKey("CategoryOneId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
         }
     }

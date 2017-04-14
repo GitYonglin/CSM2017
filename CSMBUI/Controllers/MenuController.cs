@@ -42,61 +42,17 @@ namespace CSMBUI.Controllers
                         //}
                     }
                 },
-                //new Menu
-                //{
-                //    Icon = "el-icon-message",Name="食材",Show=false,url="/Food/",
-                //    SubCategory =new List<Menu>
-                //    {
-                //        new Menu {
-                //            Icon = "el-icon-message",Name="主料",Show=false,url="/Food/Main/"
-                //        },
-                //        new Menu {
-                //            Icon = "el-icon-message",Name="辅料",Show=false,url="/Food/Accessory/"
-                //        },
-                //        new Menu {
-                //            Icon = "el-icon-message",Name="酱料",Show=false,url="/Food/Paste/"
-                //        }
-                //    }
-                //},
-                //new Menu
-                //{
-                //    Icon = "el-icon-message",Name="菜谱",Show=false,url="/Cookbook/",
-                //    SubCategory =new List<Menu>
-                //    {
-                //        new Menu {
-                //            Icon = "el-icon-message",Name="早餐",Show=false,url="/Cookbook/Breakfast/"
-                //        },
-                //        new Menu {
-                //            Icon = "el-icon-message",Name="午餐",Show=false,url="/Cookbook/Lunch/"
-                //        },
-                //        new Menu {
-                //            Icon = "el-icon-message",Name="晚餐",Show=false,url="/Cookbook/Dinner/"
-                //        }
-                //    }
-                //},
-                //new Menu
-                //{
-                //    Icon = "el-icon-message",Name="套餐",Show=false,url="/Package/",
-                //    SubCategory =new List<Menu>
-                //    {
-                //        new Menu {
-                //            Icon = "el-icon-message",Name="早餐",Show=false,url="/Package/Breakfast/"
-                //        },
-                //        new Menu {
-                //            Icon = "el-icon-message",Name="午餐",Show=false,url="/Package/Lunch/"
-                //        },
-                //        new Menu {
-                //            Icon = "el-icon-message",Name="晚餐",Show=false,url="/Package/Dinner/"
-                //        }
-                //    }
-                //},
+               
             };
 
             //string json = JsonConvert.SerializeObject(menu);
 
             var menus = await _CategoryText.AllAsync();
-            var arr = new List<CategoryOne>();
-            arr.AddRange(menus);
+
+            //var menusAsync = await _CategoryText.GetAllListAsync();
+            var vv = Json(menus);
+            var a = menus.ToArray();
+
             return Json(menus);
         }
     }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CSMDbContext.Migrations
 {
-    public partial class db20170412 : Migration
+    public partial class db20170414 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,7 +45,7 @@ namespace CSMDbContext.Migrations
                 {
                     CategoryId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CategoryOneId = table.Column<int>(nullable: true),
+                    CategoryOneId = table.Column<int>(nullable: false),
                     Icon = table.Column<string>(nullable: true),
                     ImgUrl = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
@@ -59,7 +59,7 @@ namespace CSMDbContext.Migrations
                         column: x => x.CategoryOneId,
                         principalTable: "CategoryOnes",
                         principalColumn: "CategoryOneId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
