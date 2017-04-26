@@ -1,0 +1,127 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    //List<Category> categorys = ViewData["categorys"] as List<Category>;
+    List<Category> categorys = new List<Category>() { new Category() { CategoryId = 1, Name = "12123" }, new Category() { CategoryId = 1, Name = "2222" }, new Category() { CategoryId = 1, Name = "333" } };
+}
+
+<h1>添加食材</h1>
+<div id="app">
+    <el-form action="/Food/Edit/" method="post" enctype="multipart/form-data" label-width="80px">
+        <el-form-item label="活动名称">
+            <el-input name="food.name"></el-input>
+        </el-form-item>
+        <el-form-item label="描述">
+            <el-input type="textarea" name="food.desc" v-model="food.desc"></el-input>
+        </el-form-item>
+        <el-form-item label="价格">
+            <el-input type="Number" name="food.price" v-model="food.price">
+                <template slot="prepend">
+                    ¥
+                </template>
+            </el-input>
+        </el-form-item>
+        <el-form-item label="剂量">
+            <el-input type="Number" name="food.dose" v-model="food.dose">
+                <template slot="append">
+                    g
+                </template>
+            </el-input>
+        </el-form-item>
+        <el-form-item label="最小剂量">
+            <el-input type="Number" name="food.minDose" v-model="minDose">
+                <template slot="append">
+                    g
+                </template>
+            </el-input>
+        </el-form-item>
+        <el-form-item label="库存量">
+            <el-input type="Number" name="food.inventory" v-model="food.inventory"></el-input>
+        </el-form-item>
+        <el-form-item label="上架">
+            <input type="checkbox" name="f" value="{{food.shelves}}" v-model="food.shelves">
+
+            <el-switch v-model="food.shelves"
+                       on-text=""
+                       off-text=""
+                       name="food.shelves"
+                       value="{{food.shelves}}">
+            </el-switch>
+            <p> {{food.shelves}}</p>
+
+        </el-form-item>
+        <el-form-item label="进货日期">
+            <input type="text" name="food.PurchasesDate" value="food.PurchasesDate" v-model="food.PurchasesDate" />
+            <el-col :span="11">
+                <el-form-item>
+                    <el-date-picker :name="food.PurchasesDate" v-model="food.PurchasesDate" type="date" placeholder="选择日期" style="width: 100%;"></el-date-picker>
+                </el-form-item>
+            </el-col>
+        </el-form-item>
+
+        @*多选*@
+        <el-form-item label="分类">
+            @foreach (var c in categorys)
+            {
+                <label>
+
+                <input type="checkbox" name="categorys" value="@c.CategoryId" v-model="category[@c.CategoryId]"/>@c.Name
+                </label>
+                <el-checkbox name="categorys" value="@c.CategoryId" v-model="category[@c.CategoryId]">@c.Name</el-checkbox>
+            }
+        </el-form-item>
+        @*子类添加*@
+
+        <div class="el-form bg-f8f8f8" v-for="(item, index) in [1]">
+            <div class="el-dialog__headerbtn" @@click="Categorycount.splice(index,1)">
+                <i class="el-dialog__close el-icon el-icon-close"></i>
+            </div>
+
+            <h3>图片{{index + 1 }}</h3>
+            <el-form-item label="标题">
+                <el-input :name="'imgs['+ index + '].Title'" v-model="item.title"></el-input>
+            </el-form-item>
+            <el-form-item label="描述">
+                <el-input :name="'imgs['+ index + '].Desd'" type="textarea" v-model="item.desd"></el-input>
+            </el-form-item>
+            <el-form-item label="图片">
+                <input :name="'imgs['+ index + '].imgUrl'" type="text" v-model="item.imgUrl" />
+                <el-input :name="'imgs['+ index + '].file'" type="file"></el-input>
+            </el-form-item>
+        </div>
+        <el-form-item label="操作">
+            <el-button @@click="Menu = false">取 消</el-button>
+            <el-button type="info" @@click="CategoryCountAdd">添加子类+</el-button>
+            <el-button type="danger" native-type="submit">提交保存</el-button>
+        </el-form-item>
+    </el-form>
+</div>
+
+@section js{
+    <script>
+        var home = {
+            data() {
+                return {
+                    food: {
+                        name:'',
+                        desc:'',
+                        pricd:'',
+                        dose:'',
+                        minDose:'',
+                        inventory: '',
+                        shelves:false,
+                        PurchasesDate:'',
+                    },
+                    imgs: [],
+                    category: {}
+                };
+            },
+            methods: {
+
+            }
+        }
+        var Ctor = Vue.extend(home)
+        new Ctor().$mount('#app')
+    </script>
+}

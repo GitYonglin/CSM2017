@@ -1,0 +1,44 @@
+﻿<template>
+    <div id='app-root'>
+        <el-row class="container">
+            <el-col :span="24" class="header">
+                <el-col :span="10" class="logo" :class="collapsed?'logo-collapse-width':'logo-width'">
+                    <span v-text="collapsed?'':sysName"></span>
+                </el-col>
+                <el-col :span="10">
+                    <!-- click 切换左侧菜单显示 -->
+                    <div class="tools" @click.prevent="collapsed= !collapsed">
+                        <i class="el-icon-more"></i>
+                    </div>
+                </el-col>
+                <el-col :span="4" class="userinfo">
+                    <el-dropdown trigger="hover">
+                        <span class="el-dropdown-link userinfo-inner" v-text="sysUserName"></span>
+                        <img :src="sysUserAvatar" />
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </el-col>
+            </el-col>
+            <el-col :span="24" class="main">
+                <aside class="el-menu" :class="collapsed?'menu-collapsed':'menu-expanded'">
+                    <menu-component :collapsed="collapsed"></menu-component>
+                </aside>
+                <!--内容显示-->
+                <section class="content-container">
+                    <router-view></router-view>
+                </section>
+
+            </el-col>
+        </el-row>
+    </div>
+</template>
+
+<script src="./app.ts"></script>
+<style lang="sass">
+  a{
+      color: #48576a;
+      text-decoration: none;
+  }
+</style>

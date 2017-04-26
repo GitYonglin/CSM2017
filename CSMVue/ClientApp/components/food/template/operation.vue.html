@@ -1,0 +1,17 @@
+﻿
+<template>
+    <div>
+        <el-row>
+            <el-col :span="24">      
+                <hr />
+                <p>index--{{index}}</p>
+                <router-link :to="{name: 'edit', params: {title:'添加', index: index}}">
+                    <el-button type="success" icon="plus">添加</el-button>
+                </router-link>
+            </el-col>
+        </el-row>
+    </div>
+</template>
+
+
+<script src="./operation.ts"></script>

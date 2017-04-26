@@ -1,0 +1,9 @@
+﻿<template>
+    <div>
+        <h1>{{$route.params.msg}}</h1>
+        <h1>index--{{$route.params.index}}</h1>
+        <food-operation :index="$route.params.index" ></food-operation>
+    </div>
+</template>
+
+<script src="./food.ts"></script>

@@ -57,7 +57,7 @@
                                 </template>
                                 @*二级菜单*@
                                 <template v-for="(item2,index2) in item.subCategory" v-if="item.subCategory.length > 0 ">
-                                    <el-menu-item :index="index + '-' + index2 + '' "  @@click.native.stop="menuClick(index2,index + '-' + index2 + '')">
+                                    <el-menu-item :index="index + '-' + index2 + '' "  @@click.native.stop="menuClick(index2.url,index + '-' + index2 + '')">
                                     @*操作按钮组*@
                                         <el-button-group v-show="edit">
                                             <button type="button" class="el-button el-button--primary el-button--mini" @@click.stop="OneMenuId = item.categoryOneId; SubEdit(item2.categoryId)">
@@ -96,7 +96,7 @@
             <section class="content-container">
                 <div v-show="show== '-1'">
                     <h1>主要内容</h1>
-                    <el-button type="info" @@click="add(0)">添加+</el-button>
+                   
                 </div>
                 <template v-for="(item,index) in menus">
                     <div v-show="show == index + ''">
@@ -113,8 +113,27 @@
                                 <div class="block">
                                     <span class="demonstration">{{item2.name}}</span>
                                     <span class="wrapper float-right">
-                                        <el-button type="info" @@click="add(index)">添加+</el-button>
+                                        @*<el-button type="info" @@click="add(index)">添加+</el-button>*@
+                                        <a asp-action="edit" asp-controller="Food" class="el-button el-button--info"> + 添加</a>
                                     </span>
+                                </div>
+                                <div>
+                                    <template>
+                                        <el-table :data="tableData['t' + index + '-' + index2 + 't']"
+                                                  style="width: 100%">
+                                            <el-table-column prop="date"
+                                                             label="日期"
+                                                             width="180">
+                                            </el-table-column>
+                                            <el-table-column prop="name"
+                                                             label="姓名"
+                                                             width="180">
+                                            </el-table-column>
+                                            <el-table-column prop="address"
+                                                             label="地址">
+                                            </el-table-column>
+                                        </el-table>
+                                    </template>
                                 </div>
                             </div>
                         </template>
@@ -263,12 +282,14 @@
 
 @section js{
     <script>
-        var csrfmiddlewaretoken = '{{ csrf_token }}'
         var home = {
             data() {
                 return {
+                    //菜单数据
                     menus: [],
+                    //菜单切换显示
                     show: '-1',
+                    //菜单编辑
                     edit: false,
                     // menus: [{
                     //     icon: 'el-icon-message',
@@ -286,11 +307,15 @@
                     collapsed: false,
                     sysUserName: 'Peach',
                     sysUserAvatar: '',
-
+                    //主菜单编辑界面显示隐藏
                     Menu: false,
+                    //子菜单编辑界面显示隐藏
                     SubMenu: false,
-                    OneMenuId : 0,
+                    //主菜单id
+                    OneMenuId: 0,
+
                     CategoryAdd: false,
+                    // 主菜单数据
                     cOne: {
                         id : 0,
                         icon: '',
@@ -299,14 +324,21 @@
                         imgUrl:'',
                         file: null
                     },
+                    //子菜单数据
                     Categorycount: [],
+
                     FoodAdd: false,
                     CookbookAdd: false,
                     PackageAdd: false,
                     formLabelWidth: '120px',
 
+                    tableData: {
+
+
+                    },
                 }
             },
+            //菜单数据加载 
             created: function () {
                 // `this` 指向 vm 实例
                 axios.get('/Menu/IndexAsync')
@@ -350,7 +382,25 @@
                 menuClick(url, index) {
                     console.log(index)
                     this.show = index
+                    this.tableData['t'+ index + 't'] = [{
+                        date: '2016-05-02',
+                        name: '王小虎',
+                        address: '上海市普陀区金沙江路 1518 弄'
+                    }, {
+                        date: '2016-05-04',
+                        name: '王小虎',
+                        address: '上海市普陀区金沙江路 1517 弄'
+                    }, {
+                        date: '2016-05-01',
+                        name: '王小虎',
+                        address: '上海市普陀区金沙江路 1519 弄'
+                    }, {
+                        date: '2016-05-03',
+                        name: '王小虎',
+                        address: '上海市普陀区金沙江路 1516 弄'
+                    }]
                 },
+                //编辑界面显示隐藏
                 add(index) {
                     if (index == 0) {
                         this.CategoryAdd = true;
@@ -371,6 +421,7 @@
                         this.PackageAdd = false
                     }
                 },
+                //子菜单添加
                 CategoryCountAdd() {
                     this.Categorycount.push(
                         {

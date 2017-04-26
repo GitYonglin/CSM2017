@@ -1,0 +1,156 @@
+﻿<template>
+    <div>
+        <el-col v-show="!collapsed">
+            <el-menu default-active="0" class="el-menu-vertical-demo " unique-opened="ture">
+                <!--@*一级操作*@-->
+                <el-menu-item>
+                    <el-button type="primary" icon="edit" @click.stop="edit = !edit">编辑</el-button>
+                    <el-button type="success" icon="plus" @click.stop="MenuInit(0); Menu = true">添加</el-button>
+                </el-menu-item>
+                <template v-for="(item, index) in categorys">
+                    <el-submenu :index="index+''">
+                        <!--@*一级菜单*@-->
+                        <template slot="title">
+                            <div @click="toFood(index)">
+                                <!--@*操作按钮组*@-->
+                                <el-button-group v-show="edit">
+                                    <!--@*修改*@-->
+                                    <button type="button" class="el-button el-button--primary el-button--mini" @click.stop="cOneEdit(index)">
+                                        <i class="mg0 el-icon-edit"></i>
+                                    </button>
+                                    <!--@*删除*@-->
+                                    <button type="button" class="el-button el-button--danger el-button--mini" @click.stop="cOneDelete(item.categoryOneId)">
+                                        <i class="mg0 el-icon-delete"></i>
+                                    </button>
+                                </el-button-group>
+                                <i :class="item.icon"></i>
+                                <span v-text="item.name"></span>
+                            </div>
+                        </template>
+                        <!--@*二级菜单*@-->
+                        <template v-for="(item2,index2) in item.subCategory" v-if="item.subCategory.length > 0 ">
+                            <!--<el-menu-item :index="index + '-' + index2 + '' " @click.native.stop="menuClick(index2.url,index + '-' + index2 + '')">-->
+                            <!--@*操作按钮组*@-->
+                            <el-menu-item :index="index + '-' + index2 + '' ">
+                                <el-button-group v-show="edit">
+                                    <!--<button type="button" class="el-button el-button--primary el-button--mini" @click.stop="SubEdit(index, index2)">
+                                        <i class="mg0 el-icon-edit"></i>
+                                    </button>-->
+                                    <button type="button" class="el-button el-button--danger el-button--mini" @click.stop="SubCategoryDelete(item2.categoryId)">
+                                        <i class="mg0 el-icon-delete"></i>
+                                    </button>
+                                </el-button-group>
+                                <router-link :to="item2.url">
+                                    <span v-text="item2.name"></span>
+                                </router-link>
+                            </el-menu-item>
+                        </template>
+                        <!--@*添加二级菜单*@-->
+                        <el-menu-item v-show="edit">
+                            <el-button style="width:100%;" type="success" icon="plus" @click.stop="MenuInit(item.categoryOneId); SubMenu = true; Categorycount.push(1); ">添加</el-button>
+                        </el-menu-item>
+                    </el-submenu>
+                </template>
+
+            </el-menu>
+        </el-col>
+        <el-col v-show="collapsed">
+            <template v-for="(item,index) in categorys">
+                <div class="el-menu-item " @mouseover="item.show = true" @mouseout="item.hovers = false">
+                    <i :class="item.icon"></i>
+                    <template v-if="item.subCategory.length > 0">
+                        <ul class="menu-ul" v-show="item.show">
+                            <li v-text="item2.name" v-for="(item2,index2) in item.subCategory"></li>
+                        </ul>
+                    </template>
+                </div>
+            </template>
+
+        </el-col>
+        <div>
+            <!--@*主分类与子类编辑*@-->
+            <el-dialog title="主菜单" v-model="Menu">
+                <el-form action="/Category/CategoryOneAddAsync/" method="post" enctype="multipart/form-data">
+                    <input hidden="hidden" type="text" name="c.Id" v-model="cOne.id" />
+                    <el-form-item label="分类名称" :label-width="formLabelWidth">
+                        <el-input name="c.Name" v-model="cOne.name" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="Ico图标" :label-width="formLabelWidth">
+                        <el-input name="c.Icon" v-model="cOne.icon" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="url地址" :label-width="formLabelWidth">
+                        <el-input name="c.url" v-model="cOne.url" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="图片" :label-width="formLabelWidth">
+                        <input name="c.imgUrl" type="text" v-model="cOne.imgUrl" />
+                        <el-input type="file" name="c.File" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <!--@*子类添加*@-->
+
+                    <div class="el-form bg-f8f8f8" v-for="(item, index) in cOne.subCategory">
+                        <div class="el-dialog__headerbtn" @click="Categorycount.splice(index,1)">
+                            <i class="el-dialog__close el-icon el-icon-close"></i>
+                        </div>
+
+                        <h2>子类{{index + 1 }}</h2>
+                        <input hidden="hidden" type="text" :name="'SubCategorys['+ index + '].id'" v-model="item.categoryId" />
+                        <el-form-item label="分类名称" :label-width="formLabelWidth">
+                            <el-input :name="'SubCategorys['+ index + '].Name'" v-model="item.name" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="Ico图标" :label-width="formLabelWidth">
+                            <el-input :name="'SubCategorys['+ index + '].Icon'" v-model="item.icon" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="url地址" :label-width="formLabelWidth">
+                            <el-input :name="'SubCategorys['+ index + '].url'" v-model="item.url" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="图片" :label-width="formLabelWidth">
+                            <input :name="'SubCategorys['+ index + '].imgUrl'" type="text" v-model="item.imgUrl" />
+                            <el-input :name="'SubCategorys['+ index + '].file'" v-model="item.file" type="file" auto-complete="off"></el-input>
+                        </el-form-item>
+                    </div>
+                    <el-form-item label="操作" :label-width="formLabelWidth">
+                        <el-button @click="Menu = false">取 消</el-button>
+                        <el-button type="info" @click="CategoryCountAdd">添加子类+</el-button>
+                        <el-button type="danger" native-type="submit">提交保存</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
+            <!--@*子分类编辑*@-->
+            <el-dialog title="子类" v-model="SubMenu">
+                <el-form action="/Category/SubCategoryAddAsync/" method="post" enctype="multipart/form-data">
+                    <input type="text" name="id" v-model="OneMenuId" />
+                    <div class="el-form bg-f8f8f8" v-for="(item, index) in subCategory">
+                        <div class="el-dialog__headerbtn" @click="Categorycount.splice(index,1)">
+                            <i class="el-dialog__close el-icon el-icon-close"></i>
+                        </div>
+
+                        <h2>子类{{index + 1 }}</h2>
+                        <input :name="'SubCategorys['+ index + '].id'" type="text" v-model="item.categoryId" />
+                        <el-form-item label="分类名称" :label-width="formLabelWidth">
+                            <el-input :name="'SubCategorys['+ index + '].Name'" v-model="item.name" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="Ico图标" :label-width="formLabelWidth">
+                            <el-input :name="'SubCategorys['+ index + '].Icon'" v-model="item.icon" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="url地址" :label-width="formLabelWidth">
+                            <el-input :name="'SubCategorys['+ index + '].url'" v-model="item.url" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="图片" :label-width="formLabelWidth">
+                            <input :name="'SubCategorys['+ index + '].ImgUrl'" type="text" v-model="item.imgUrl" />
+                            <el-input :name="'SubCategorys['+ index + '].file'" v-model="item.file" type="file" auto-complete="off"></el-input>
+                        </el-form-item>
+                    </div>
+                    <el-form-item label="操作" :label-width="formLabelWidth">
+                        <el-button @click="SubMenu = false">取 消</el-button>
+                        <el-button type="info" @click="CategoryCountAdd">添加子类+</el-button>
+                        <el-button type="danger" native-type="submit">提交保存</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
+        </div>
+    </div>
+
+</template>
+
+<style src="./navmenu.css"></style>
+<script src="./navmenu.ts"></script>

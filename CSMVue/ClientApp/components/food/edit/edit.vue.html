@@ -1,0 +1,65 @@
+﻿<template>
+    <div>
+        <h2>{{$route.params.title}}</h2>
+        <h2>index--{{$route.params.index}}</h2>
+
+        <el-form id="postForm" ref="form" :model="form" label-width="80px" method="post" enctype="multipart/form-data">
+            <el-form-item label="食材名称">
+                <el-input name="form.name" v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item label="描述">
+                <el-input type="textarea" name="form.desc" v-model="form.desc"></el-input>
+            </el-form-item>
+            <el-form-item label="价格">
+                <el-input type="number" name="form.price" v-model="form.price"></el-input>
+            </el-form-item>
+            <el-form-item label="剂量">
+                <el-input type="number" name="form.dose" v-model="form.dose"></el-input>
+            </el-form-item>
+            <el-form-item label="价格">
+                <el-input type="number" name="form.minDose" v-model="form.minDose"></el-input>
+            </el-form-item>
+            <el-form-item label="库存">
+                <el-input type="number" name="form.inventory" v-model="form.inventory"></el-input>
+            </el-form-item>
+            <el-form-item label="上架">
+                <el-switch on-text="" off-text="" name="form.shelves" v-model="form.shelves"></el-switch>
+            </el-form-item>
+            <el-form-item label="进入日期">
+                <el-col :span="11">
+                    <input type="text" name="form.insertdate" v-model="form.insertdate" />
+                    <el-date-picker type="date" placeholder="选择日期" v-on:change="srtTime($event)" v-model="form.insertdate" style="width: 100%;"></el-date-picker>
+                </el-col>
+                <!--<el-col class="line" :span="2">-</el-col>
+                <el-col :span="11">
+                    <el-time-picker type="fixed-time" placeholder="选择时间" v-model="form.date2" style="width: 100%;"></el-time-picker>
+                </el-col>-->
+            </el-form-item>
+            <hr />
+            <el-form-item label="分类">
+                <div v-for="(item,index) in categorys[$route.params.index].subCategory">
+                   <el-checkbox name="categorys" @change="check($event,item.categoryId)" >{{item.name}}</el-checkbox>
+                </div>
+            </el-form-item>
+            <hr />
+            <el-form-item label="图片标题">
+                <div v-for="(item, index) in form.imgs">
+                    <h2>{{index}}</h2>
+                    <el-input :name="'imgFiles[' +index + '].url'" v-model="item.url"></el-input>
+                    <el-input :name="'imgFiles[' +index + '].title'" v-model="item.title"></el-input>
+                    <el-input :name="'imgFiles[' +index + '].describe'" v-model="item.describe"></el-input>
+                    <input type="file" :name="'imgFiles[' +index + '].file'" v-on:change="fileUP($event,item)" />
+                    <img :src="item.url" style="width:80px;height:80px;"/>
+                    <!--<el-input :name="'imgFiles[' +index + '].file'" type="file" @change="console.log($event)"></el-input>-->
+                </div>
+                <el-button type="primary" @click="addImgs"> + 添加</el-button>
+            </el-form-item>
+
+            <el-form-item>
+                <el-button type="primary" @click="ajaxSubmit">Ajax提交</el-button>
+                <el-button>取消</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</template>
+<script src="./edit.ts"></script>

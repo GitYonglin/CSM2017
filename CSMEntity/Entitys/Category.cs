@@ -22,6 +22,21 @@ namespace CSMEntity.Entitys
         //在返回json数据时避免循环问题
         [JsonIgnore]
         public CategoryOne CategoryOne { get; set; }
+        /// <summary>
+        /// 食材
+        /// </summary>
+        [JsonIgnore]
+        public List<FoodAndCategory> FoodAndCategorys { get; set; }
+        /// <summary>
+        /// 菜谱
+        /// </summary>
+        [JsonIgnore]
+        public List<CookbookAndCategory> CookbookAndCategorys { get; set; }
+        /// <summary>
+        /// 套餐
+        /// </summary>
+        [JsonIgnore]
+        public List<PackageAndCategory> PackageAndCategorys { get; set; }
     }
     public class CategoryOne
     {

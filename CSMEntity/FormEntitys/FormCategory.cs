@@ -15,4 +15,5 @@ namespace CSMEntity.FormEntitys
         public string ImgUrl { get; set; }
         public IFormFile File { get; set; }
     }
+
 }
